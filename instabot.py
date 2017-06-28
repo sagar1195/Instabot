@@ -60,4 +60,37 @@ def get_user_post(username):
     else:
         print "Error"
 
-get_user_post('195ffg')
+#get_user_post('195ffg')
+
+def get_post_id(insta_username):
+    user_id = get_user_id(insta_username)
+
+    request_url = (BASE_URL + 'users/%s/media/recent/?access_token=%s') % (user_id, ACCESS_TOKEN)
+    print ("Request URL: %s") % (request_url)
+
+    user_media = requests.get(request_url).json()
+
+    if user_media['meta']['code'] == 200:
+        if len(user_media['data']) > 0:
+            return user_media['data'][0]['id']
+        else:
+            print 'No posts to show'
+    else:
+        print "Status code other than 200 received"
+    return None
+
+def like_a_post(insta_username):
+    media_id = get_post_id(insta_username)
+    request_url = (BASE_URL + 'media/%s/likes') % (media_id)
+    payload = {
+        "access_token": ACCESS_TOKEN
+        }
+    print 'Liking the post %s' % (request_url)
+    post_a_like = requests.post(request_url,payload).json()
+
+    if post_a_like['meta']['code'] == 200:
+        print "like was successful"
+    else:
+        print 'Your like was unsuccessful. Try again!'
+
+like_a_post('sv11195')
